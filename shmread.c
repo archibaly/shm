@@ -4,18 +4,25 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/sem.h>
 
 #include "shm.h"
+#include "semaphore.h"
 
 int main(int argc, char** argv)
 {
-	int shm_id, i;
-	key_t key;
-	char temp[8];
+	int shm_id;
 	people *p_map;
-	char pathname[30] ;
 
-	shm_id = shmget(IPCKEY, 4096, 0600);
+	int sem_id;
+	sem_id = semget((key_t)SEM_SEED, 1, IPC_CREAT | 0600);
+	if (sem_id < 0) {
+		perror("semget()");
+		return -1;
+	}
+	printf("sem_id = %d\n", sem_id);
+
+	shm_id = shmget(SHM_SEED, 4096, 0600);
 	if (shm_id == -1) {
 		perror("shmget()");
 		return -1;
@@ -23,9 +30,12 @@ int main(int argc, char** argv)
 	printf("shm_id = %d\n", shm_id);
 	p_map = (people *)shmat(shm_id, NULL, 0);
 
-	for(i = 0; i < 3; i++) {
-		printf("name = %s\n", p_map[i].name);
-		printf("age = %d\n", p_map[i].age);
+	for(;;) {
+		semaphore_p(sem_id);
+		printf("name = %s\n", p_map->name);
+		printf("age = %d\n", p_map->age);
+		semaphore_v(sem_id);
+		sleep(1);
 	}
 	shmdt(p_map);
 

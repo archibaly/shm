@@ -1,7 +1,7 @@
 #ifndef _SHM_H_
 #define _SHM_H_
 
-#define IPCKEY 123
+#define SHM_SEED	10001
 
 typedef struct {
 	char name[8];
