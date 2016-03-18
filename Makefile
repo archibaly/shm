@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -DDEBUG=1
 
 all: shmwrite shmread
 

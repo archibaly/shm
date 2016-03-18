@@ -20,7 +20,9 @@ int main(int argc, char** argv)
 		perror("semget()");
 		return -1;
 	}
+#if DEBUG
 	printf("sem_id = %d\n", sem_id);
+#endif
 
 	shm_id = shmget(SHM_SEED, 4096, IPC_CREAT | 0600);
 	if (shm_id == -1) {
