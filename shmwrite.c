@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 	}
 	printf("sem_id = %d\n", sem_id);
 
-	shm_id = shmget(SHM_SEED, 4096, 0600);
+	shm_id = shmget(SHM_SEED, 4096, IPC_CREAT | 0600);
 	if (shm_id != -1) {	/* already be created */
 		if (shmctl(shm_id, IPC_RMID, NULL) < 0) {	/* delete it first */
 			perror("shmctl()");

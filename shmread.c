@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 	}
 	printf("sem_id = %d\n", sem_id);
 
-	shm_id = shmget(SHM_SEED, 4096, 0600);
+	shm_id = shmget(SHM_SEED, 4096, IPC_CREAT | 0600);
 	if (shm_id == -1) {
 		perror("shmget()");
 		return -1;
