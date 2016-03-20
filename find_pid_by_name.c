@@ -11,7 +11,7 @@
  * @pid : 存放获得的pid的数组
  * @size: 数组的大小
  */
-int find_pid_by_name(const char* pid_name, pid_t *pid, int size)
+int find_pid_by_name(const char *pid_name, pid_t *pid, int size)
 {
 	DIR *dir;
 	struct dirent *next;

@@ -3,6 +3,6 @@
 
 #include <sys/types.h>
 
-int find_pid_by_name(const char* pidName, pid_t *pid, int size);
+int find_pid_by_name(const char* pid_name, pid_t *pid, int size);
 
 #endif /* __FIND_PID_BY_NAME__ */
