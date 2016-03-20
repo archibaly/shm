@@ -5,9 +5,11 @@
 #include <sys/sem.h>
 #include <unistd.h>
 #include <string.h>
+#include <signal.h>
 
 #include "shm.h"
 #include "semaphore.h"
+#include "find_pid_by_name.h"
 
 int main(int argc, char** argv)
 {
@@ -24,6 +26,7 @@ int main(int argc, char** argv)
 	printf("sem_id = %d\n", sem_id);
 
 	shm_id = shmget(SHM_SEED, 4096, IPC_CREAT | 0600);
+#if 0
 	if (shm_id != -1) {	/* already be created */
 		if (shmctl(shm_id, IPC_RMID, NULL) < 0) {	/* delete it first */
 			perror("shmctl()");
@@ -32,6 +35,7 @@ int main(int argc, char** argv)
 	}
 
 	shm_id = shmget(SHM_SEED, 4096, IPC_CREAT | IPC_EXCL | 0600);
+#endif
 	if (shm_id < 0) {
 		perror("shmget");
 		return -1;
@@ -48,6 +52,11 @@ int main(int argc, char** argv)
 		sprintf(p_map->name, temp);
 		p_map->age = i + 20;
 		semaphore_v(sem_id);
+		pid_t read_pid;
+		if (find_pid_by_name("shmread", &read_pid, 1) > 0) {
+			printf("shmread = %d\n", read_pid);
+			kill(read_pid, SIGUSR1);
+		}
 		sleep(3);
 	}
 	shmdt(p_map);

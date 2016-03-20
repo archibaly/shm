@@ -5,16 +5,28 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/sem.h>
+#include <signal.h>
 
 #include "shm.h"
 #include "semaphore.h"
 
+people *p_map;
+int sem_id;
+
+void sig_usr1(int num)
+{
+	if (num == SIGUSR1) {
+		semaphore_p(sem_id);
+		printf("name = %s\n", p_map->name);
+		printf("age = %d\n", p_map->age);
+		p_map->age = -1;
+		semaphore_v(sem_id);
+	}
+}
+
 int main(int argc, char** argv)
 {
 	int shm_id;
-	people *p_map;
-
-	int sem_id;
 	sem_id = semget((key_t)SEM_SEED, 1, IPC_CREAT | 0600);
 	if (sem_id < 0) {
 		perror("semget()");
@@ -32,11 +44,9 @@ int main(int argc, char** argv)
 	printf("shm_id = %d\n", shm_id);
 	p_map = (people *)shmat(shm_id, NULL, 0);
 
+	signal(SIGUSR1, sig_usr1);
+	// set_semvalue(sem_id, 0);
 	for(;;) {
-		semaphore_p(sem_id);
-		printf("name = %s\n", p_map->name);
-		printf("age = %d\n", p_map->age);
-		semaphore_v(sem_id);
 		sleep(1);
 	}
 	shmdt(p_map);
