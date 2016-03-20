@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 {
 	signal(SIGUSR1, sig_usr1);
 	for(;;) {
-		sleep(1);
+		pause();
 	}
 
 	return 0 ;
